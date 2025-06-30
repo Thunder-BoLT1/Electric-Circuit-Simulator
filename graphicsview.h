@@ -8,6 +8,7 @@
 #include <utility>
 #include <QWidget>
 #include "GraphicsItem.h"
+#include "wire.h"
 /*
  * This Might Be Used Later will ignore it for now
 struct Vertex{
@@ -33,6 +34,8 @@ class GraphicsView: public QGraphicsView
      *  I will use a QVector with pairs each pair holds the other node and the connecting electric component pointer
     */
     std::pmr::unordered_map<int, QVector<std::pair<int, GraphicsItem*>>> Graph;
+    //For wiring feature
+    Wire* CurrWire;
 public:
     GraphicsView(QWidget * widget = nullptr);
     void SetMovingItem(GraphicsItem* Item = nullptr);
@@ -42,6 +45,7 @@ public:
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 private slots:
     void HandleDuplicate(GraphicsItem* Item);
 };

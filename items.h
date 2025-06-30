@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QDir>
 #include "IComponent.h"
+#include "utils.h"
 
 enum Components{
     IVS, ICS, RES,VCVS, VCCS, CCVS, CCCS

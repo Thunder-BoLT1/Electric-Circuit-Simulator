@@ -4,6 +4,7 @@
 
 GraphicsView::GraphicsView(QWidget * widget): QGraphicsView(widget) {
     MovingItem = nullptr;
+    CurrWire = nullptr;
     this->setMouseTracking(true);
 }
 
@@ -12,19 +13,35 @@ void GraphicsView::mousePressEvent(QMouseEvent* event){
         NetList.push_back(MovingItem);
         MovingItem->setOpacity(1);
         MovingItem = nullptr;
+    }else if(CurrWire){
+        if(event->button() == Qt::LeftButton){
+            //Add Wiring Logic TODO:
+            //......
+            CurrWire = nullptr;
+        }else{
+            delete CurrWire;
+            CurrWire = nullptr;
+        }
     }
     QGraphicsView::mousePressEvent(event);
 }
 
 void GraphicsView::mouseMoveEvent(QMouseEvent* event){
     if(MovingItem){
-        QPointF NewPos((int(event->pos().x()) / 30) * 30, (int(event->pos().y()) / 30)* 30);
-        if(int(event->pos().x() - NewPos.x()) > 15) NewPos.setX(NewPos.x() + 30);
-        if(int(event->pos().y() - NewPos.y()) > 15) NewPos.setY(NewPos.y() + 30);
+        QPointF NewPos = Utils::GetNearestGridPoint(event->pos());
         // If Invalid Position (Out of the Grid) Return to The initial Press Position
         if(NewPos.x() > 0 && NewPos.x() < 900 && NewPos.y() > 0 && NewPos.y() < 600) MovingItem->setPos(NewPos);
+    }else if(CurrWire){
+        CurrWire->AdjustEndPoint(event->pos());
     }
     QGraphicsView::mouseMoveEvent(event);
+}
+
+void GraphicsView::mouseDoubleClickEvent(QMouseEvent *event){
+    //Check if there is a previous item
+    QGraphicsItem* ItemClicked = this->scene()->itemAt(mapToScene((event->pos())), transform());
+    if(!ItemClicked) CurrWire = new Wire(this->scene(), event->pos());
+    QGraphicsView::mouseDoubleClickEvent(event);
 }
 
 void GraphicsView::SetMovingItem(GraphicsItem* Item){
@@ -43,6 +60,11 @@ void GraphicsView::HandleDuplicate(GraphicsItem* Item){
 
 void GraphicsView::AddToGV(GraphicsItem* Item){
     if(Item){
+        //Remove any Wire was being added
+        if(CurrWire){
+            delete CurrWire;
+            CurrWire = nullptr;
+        }
         connect(Item, &GraphicsItem::duplicateRequest, this, &GraphicsView::HandleDuplicate);
         Item->setOpacity(0.5); //For Ghost effect will be changed later to 1
         Item->setPos(150, 210);

@@ -56,9 +56,7 @@ void GraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event){
 }
 void GraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event){
     if(event->button() == Qt::LeftButton){
-        QPointF NewPos((int(event->scenePos().x()) / 30) * 30, (int(event->scenePos().y()) / 30)* 30);
-        if(int(event->scenePos().x() - NewPos.x()) > 15) NewPos.setX(NewPos.x() + 30);
-        if(int(event->scenePos().y() - NewPos.y()) > 15) NewPos.setY(NewPos.y() + 30);
+        QPointF NewPos = Utils::GetNearestGridPoint(event->scenePos());
         if(NewPos.x() <= 0 || NewPos.x() >= 900 || NewPos.y() <= 0 || NewPos.y() >= 600) NewPos = PressPos; // If Invalid Position (Out of the Grid) Return to The initial Press Position
         this->setPos(NewPos);
     }

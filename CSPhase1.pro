@@ -17,7 +17,9 @@ SOURCES += \
     independentinputdialog.cpp \
     items.cpp \
     main.cpp \
-    widget.cpp
+    utils.cpp \
+    widget.cpp \
+    wire.cpp
 
 HEADERS += \
     GraphicsItem.h \
@@ -27,7 +29,9 @@ HEADERS += \
     icomponent.h \
     independentinputdialog.h \
     items.h \
-    widget.h
+    utils.h \
+    widget.h \
+    wire.h
 
 FORMS += \
     widget.ui
