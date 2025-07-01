@@ -4,9 +4,12 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QMenu>
+#include <QDir>
 #include "utils.h"
 
-class Wire
+class Wire: public QGraphicsItem
 {
     static QPen WirePen;
     static QBrush WireBrush;
@@ -14,10 +17,13 @@ class Wire
     QGraphicsEllipseItem *StartNode, *EndNode;
     QPointF StartPos, EndPos;
 public:
-    Wire(QGraphicsScene*, QPointF);
-    ~Wire();
+    Wire(QPointF);
     void AdjustEndPoint(QPointF);
     void GetWireConnection(QPointF&, QPointF&);
+    QRectF boundingRect() const override;
+    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override;
+protected:
+   void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 };
 
 #endif // WIRE_H

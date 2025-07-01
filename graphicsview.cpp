@@ -10,18 +10,23 @@ GraphicsView::GraphicsView(QWidget * widget): QGraphicsView(widget) {
 
 void GraphicsView::mousePressEvent(QMouseEvent* event){
     if(MovingItem){
-        NetList.push_back(MovingItem);
-        MovingItem->setOpacity(1);
+        if(event->button() == Qt::LeftButton){
+            NetList.push_back(MovingItem);
+            MovingItem->setOpacity(1);
+        }else{
+            MovingItem->scene()->removeItem(MovingItem);
+            delete MovingItem;
+        }
         MovingItem = nullptr;
     }else if(CurrWire){
         if(event->button() == Qt::LeftButton){
             //Add Wiring Logic TODO:
             //......
-            CurrWire = nullptr;
         }else{
+            CurrWire->scene()->removeItem(CurrWire);
             delete CurrWire;
-            CurrWire = nullptr;
         }
+        CurrWire = nullptr;
     }
     QGraphicsView::mousePressEvent(event);
 }
@@ -40,7 +45,10 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* event){
 void GraphicsView::mouseDoubleClickEvent(QMouseEvent *event){
     //Check if there is a previous item
     QGraphicsItem* ItemClicked = this->scene()->itemAt(mapToScene((event->pos())), transform());
-    if(!ItemClicked) CurrWire = new Wire(this->scene(), event->pos());
+    if(!dynamic_cast<GraphicsItem*>(ItemClicked)){
+        CurrWire = new Wire(event->pos());
+        this->scene()->addItem(CurrWire);
+    }
     QGraphicsView::mouseDoubleClickEvent(event);
 }
 
