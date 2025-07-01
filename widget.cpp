@@ -16,11 +16,14 @@ Widget::Widget(QWidget *parent)
 }
 
 //Initalization Functions
+void Widget::SetupGrid(){
+    for(int i = 0; i < GridWidth; i += GridSize) scene->addLine(i, 0, i , GridHight, QPen(Qt::gray));
+    for(int i = 0; i < GridHight; i += GridSize) scene->addLine(0, i, GridWidth , i, QPen(Qt::gray));
+}
 void Widget::GVInit(){
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    for(int i = 0; i < GridWidth; i += GridSize) scene->addLine(i, 0, i , GridHight, QPen(Qt::gray));
-    for(int i = 0; i < GridHight; i += GridSize) scene->addLine(0, i, GridWidth , i, QPen(Qt::gray));
+    SetupGrid();
     ui->graphicsView->setScene(scene);
     ui->graphicsView->show();
 }
@@ -28,12 +31,15 @@ void Widget::GVInit(){
 void Widget::MenuInit(){
     QMenuBar* MenuBar = new QMenuBar(this);
     QAction* Components = new QAction(QIcon(DirPath + "\\resistor.png"), "Components", this);
-    QAction* Run = new QAction(QIcon(DirPath + "\\playButton.png"), "Components", this);
+    QAction* Run = new QAction(QIcon(DirPath + "\\playButton.png"), "Run", this);
+    QAction* Clear = new QAction(QIcon(DirPath + "\\delete.png"), "Clear", this);
     MenuBar->addAction(Components);
     MenuBar->addAction(Run);
+    MenuBar->addAction(Clear);
     MenuBar->resize(1200, 21);
     connect(Components, &QAction::triggered, this, &Widget::OpenComponenetsMenu);
     connect(Run, &QAction::triggered, this, &Widget::RunSimulation);
+    connect(Clear, &QAction::triggered, this, &Widget::ClearGV);
 }
 
 void Widget::OpenComponenetsMenu(){
@@ -50,6 +56,12 @@ void Widget::OpenComponenetsMenu(){
 void Widget::RunSimulation(){
     ui->graphicsView->BuildGraph();
 }
+
+void Widget::ClearGV(){
+    ui->graphicsView->ResetGV();
+    SetupGrid();
+}
+
 Widget::~Widget()
 {
     delete ui;

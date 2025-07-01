@@ -107,3 +107,9 @@ void GraphicsView::BuildGraph(){
         qDebug() << SnodeGId << EnodeGId;
     }
 }
+
+void GraphicsView::ResetGV(){
+    this->scene()->clear();
+    NetList.clear();
+    Graph.clear();
+}

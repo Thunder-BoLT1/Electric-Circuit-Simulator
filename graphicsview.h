@@ -29,7 +29,6 @@ class GraphicsView: public QGraphicsView
 {
     GraphicsItem* MovingItem;
     QVector<GraphicsItem*> NetList;
-    QVector<IComponent*> Wires;
     /*I will use an unorderedmap to store the graph each vertix will be a constant number depending on the position in the grid then for each node (ie. vertix)
      *  I will use a QVector with pairs each pair holds the other node and the connecting electric component pointer
     */
@@ -41,6 +40,7 @@ public:
     void SetMovingItem(GraphicsItem* Item = nullptr);
     void AddToGV(GraphicsItem* Item);
     GraphicsItem* GetMovingItem();
+    void ResetGV();
     void BuildGraph();
 protected:
     void mousePressEvent(QMouseEvent* event) override;

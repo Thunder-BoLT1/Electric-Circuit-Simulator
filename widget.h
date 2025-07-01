@@ -35,11 +35,13 @@ private:
     QGraphicsScene * scene;
 
     //Initialization Functions
+    void SetupGrid();
     void GVInit();
     void MenuInit();
 
 private slots:
     void OpenComponenetsMenu();
     void RunSimulation();
+    void ClearGV();
 };
 #endif // WIDGET_H

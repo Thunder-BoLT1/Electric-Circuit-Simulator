@@ -23,7 +23,6 @@ void Wire::AdjustEndPoint(QPointF end){
     EndPos = Utils::GetNearestGridPoint(end);
     double Hdist = EndPos.x() - StartPos.x();
     double Vdist = EndPos.y() - StartPos.y();
-    qDebug() << "ah";
     HLine->setLine(0, 0, Hdist, 0);
     VLine->setLine(0, 0, 0, Vdist);
     if(Hdist >= Vdist) {
