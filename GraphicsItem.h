@@ -11,13 +11,16 @@
 #include <independentinputdialog.h>
 #include <QMessageBox>
 
+class GraphicsView;
+
 class GraphicsItem :public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
     static QPointF PressPos, Offset;
     IComponent* Component;
+    GraphicsView* View;
 public:
-    GraphicsItem(QPixmap Image, Components type);
+    GraphicsItem(QPixmap Image, Components type, GraphicsView* view);
     GraphicsItem(GraphicsItem& other);
     ~GraphicsItem();
     IComponent * GetComponent();

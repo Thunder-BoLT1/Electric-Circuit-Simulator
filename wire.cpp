@@ -1,17 +1,14 @@
 #include "wire.h"
-
 #define Radius 4
 
 QPen Wire::WirePen(Qt::red, 2);
 QBrush Wire::WireBrush(Qt::red);
 
-Wire::Wire(QPointF start):StartPos(Utils::GetNearestGridPoint(start)) {
+Wire::Wire(QPointF start):StartPos(Utils::GetNearestGridPoint(start)){
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable |QGraphicsItem::ItemHasNoContents);
     //Create Items Associated with each wire
-    HLine = new QGraphicsLineItem(this);
-    VLine = new QGraphicsLineItem(this);
-    HLine->setPen(WirePen);
-    VLine->setPen(WirePen);
+    Line = new QGraphicsPathItem(this);
+    Line->setPen(WirePen);
     StartNode = new QGraphicsEllipseItem(-Radius / 2, -Radius / 2, Radius, Radius, this);
     EndNode = new QGraphicsEllipseItem(-Radius / 2, -Radius / 2, Radius, Radius, this);
     StartNode->setBrush(WireBrush);
@@ -19,25 +16,35 @@ Wire::Wire(QPointF start):StartPos(Utils::GetNearestGridPoint(start)) {
     EndNode->setBrush(WireBrush);
     EndNode->setPos(StartPos);
 }
-void Wire::AdjustEndPoint(QPointF end){
-    EndPos = Utils::GetNearestGridPoint(end);
-    double Hdist = EndPos.x() - StartPos.x();
-    double Vdist = EndPos.y() - StartPos.y();
-    HLine->setLine(0, 0, Hdist, 0);
-    VLine->setLine(0, 0, 0, Vdist);
-    if(Hdist >= Vdist) {
-        HLine->setPos(StartPos);
-        VLine->setPos(StartPos.x() + Hdist, StartPos.y());
-    }else{
-        VLine->setPos(StartPos);
-        HLine->setPos(StartPos.x(), StartPos.y() + Vdist);
+
+bool Wire::isValidPath(QList<QPointF>& Points){
+    for(int i = 0; i < Points.size() - 1; i++){
+        QGraphicsLineItem TestLine(QLineF(Points[i], Points[i+1]), this);
+        TestLine.setPen(Qt::NoPen);
+        TestLine.setZValue(-1);
+        TestLine.setVisible(false);
+        QList<QGraphicsItem*> Collisions= TestLine.scene()->collidingItems(&TestLine);
+        for(int i = 0; i < Collisions.size(); i++)
+            if(dynamic_cast<GraphicsItem*>(Collisions[i])) return false;
     }
-    EndNode->setPos(EndPos);
+    return true;
 }
 
-void Wire::GetWireConnection(QPointF& s, QPointF& e){
-    s = StartPos;
-    e = EndPos;
+void Wire::AdjustEndPoint(QVector<QVector<Vertex>> & Grid, QPointF End){
+    EndPos = Utils::GetNearestGridPoint(End);
+    EndNode->setPos(EndPos);
+    QList<QPointF> Points = Utils::ShortestPath(Grid, Utils::GetGridID(StartPos), Utils::GetGridID(EndPos));
+    QPainterPath Path;
+    if(!Points.empty()){
+        Path.moveTo(Points[0]);
+        for(int i = 1; i < Points.size(); i++) Path.lineTo(Points[i]);
+        Line->setPath(Path);
+    }
+}
+
+void Wire::GetWireConnection(int& s, int& e){
+    s = StartNode->pos().x() / 30 + (StartNode->pos().y() / 30) * 31 ;
+    e = EndNode->pos().x() / 30 + (EndNode->pos().y() / 30) * 31 ;
 }
 
 QRectF Wire::boundingRect() const

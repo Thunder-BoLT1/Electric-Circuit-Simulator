@@ -13,7 +13,7 @@ public:
     // setter functions
     bool SetName(QString);
     bool SetNodes(int, int);
-    bool SetValue(double);
+    bool SetValue(double, bool Wire = false);
     void SetCurrent(double);
     void SetVoltage(double);
     //getter functions

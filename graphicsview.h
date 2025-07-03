@@ -9,13 +9,9 @@
 #include <QWidget>
 #include "GraphicsItem.h"
 #include "wire.h"
+
 /*
  * This Might Be Used Later will ignore it for now
-struct Vertex{
-    int GridId, NodeId;
-    Vertex(int node = -1);
-};
-
 namespace std {
 template<>
 struct hash<Vertex> {
@@ -29,10 +25,12 @@ class GraphicsView: public QGraphicsView
 {
     GraphicsItem* MovingItem;
     QVector<GraphicsItem*> NetList;
+    QVector<Wire*> Wires;
+    QVector<QVector<Vertex>> Grid; //0 For Free 1 For Blcoked (ie. Circuit Elemnt Exists)
     /*I will use an unorderedmap to store the graph each vertix will be a constant number depending on the position in the grid then for each node (ie. vertix)
      *  I will use a QVector with pairs each pair holds the other node and the connecting electric component pointer
     */
-    std::pmr::unordered_map<int, QVector<std::pair<int, GraphicsItem*>>> Graph;
+    std::pmr::unordered_map<int, QVector<std::pair<int, IComponent*>>> Graph;
     //For wiring feature
     Wire* CurrWire;
 public:
@@ -42,6 +40,9 @@ public:
     GraphicsItem* GetMovingItem();
     void ResetGV();
     void BuildGraph();
+    void RemoveItemFromGrid(GraphicsItem*);
+    void AddItemToGrid(GraphicsItem*);
+    void ResetGrid();
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;

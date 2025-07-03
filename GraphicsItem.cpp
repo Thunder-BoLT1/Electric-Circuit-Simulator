@@ -1,8 +1,9 @@
 #include "GraphicsItem.h"
+#include "graphicsview.h"
 
 QPointF GraphicsItem::PressPos, GraphicsItem::Offset;
 
-GraphicsItem::GraphicsItem(QPixmap Image, Components Type):QGraphicsPixmapItem(Image.scaled(60, 60,Qt::KeepAspectRatio, Qt::SmoothTransformation)){
+GraphicsItem::GraphicsItem(QPixmap Image, Components Type, GraphicsView* view):QGraphicsPixmapItem(Image.scaled(60, 60,Qt::KeepAspectRatio, Qt::SmoothTransformation)){
     //Set Important Attributes
     this->setFlag(ItemIsMovable);
     this->setOffset(-30, -30);  //To Rotate the Item Aroud it's Center Not Around the TopLeft Corner
@@ -20,10 +21,12 @@ GraphicsItem::GraphicsItem(QPixmap Image, Components Type):QGraphicsPixmapItem(I
         Component = new RESItem;
         break;
     }
+    View = view;
 }
 
 GraphicsItem::GraphicsItem(GraphicsItem& other){
     Component = other.Component->CreateCopy();
+    this->View = other.View;
     this->setPixmap(other.pixmap());
     this->setOffset(other.offset());
     this->setFlag(ItemIsMovable);
@@ -36,6 +39,7 @@ void GraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event){
     if(event->buttons() & Qt::LeftButton){
         PressPos = this->scenePos();    // Save Position of the Item For Later
         Offset = event->scenePos();     // Get Postion of the Click
+        View->RemoveItemFromGrid(this);
     }
     else if(event->button() == Qt::RightButton){
         QMenu menu;
@@ -43,7 +47,7 @@ void GraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event){
         menu.addAction(QIcon(QDir::currentPath() + "\\rotateLeft.png"), "Rotate Anti-ClockWise", [this](){this->setRotation(int(this->rotation() - 90) % 360);});
         menu.addAction(QIcon(QDir::currentPath() + "\\duplicate.png"), "Duplicate", [this]() {
             emit duplicateRequest(this);});
-        menu.addAction(QIcon(QDir::currentPath() + "\\remove.png"), "Delete", [this](){this->scene()->removeItem(this); delete this;});
+        menu.addAction(QIcon(QDir::currentPath() + "\\remove.png"), "Delete", [this](){View->RemoveItemFromGrid(this); this->scene()->removeItem(this); delete this;});
         menu.exec(event->screenPos());
     }
     QGraphicsPixmapItem::mousePressEvent(event);
@@ -59,6 +63,7 @@ void GraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event){
         QPointF NewPos = Utils::GetNearestGridPoint(event->scenePos());
         if(NewPos.x() <= 0 || NewPos.x() >= 900 || NewPos.y() <= 0 || NewPos.y() >= 600) NewPos = PressPos; // If Invalid Position (Out of the Grid) Return to The initial Press Position
         this->setPos(NewPos);
+        View->AddItemToGrid(this);
     }
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }

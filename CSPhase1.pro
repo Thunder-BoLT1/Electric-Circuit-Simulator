@@ -18,6 +18,7 @@ SOURCES += \
     items.cpp \
     main.cpp \
     utils.cpp \
+    vertex.cpp \
     widget.cpp \
     wire.cpp
 
@@ -30,6 +31,7 @@ HEADERS += \
     independentinputdialog.h \
     items.h \
     utils.h \
+    vertex.h \
     widget.h \
     wire.h
 

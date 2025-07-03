@@ -46,9 +46,9 @@ void Widget::OpenComponenetsMenu(){
     ComponentsMenu menu;
     if(menu.exec() == QDialog::Accepted){
         GraphicsItem* NewItem = nullptr;
-        if(menu.Get_Type() == "Voltage Source") NewItem = new GraphicsItem(ComponentsImages[IVS], IVS);
-        else if(menu.Get_Type() == "Current Source") NewItem = new GraphicsItem(ComponentsImages[ICS], ICS);
-        else if(menu.Get_Type() == "Resistor") NewItem = new GraphicsItem(ComponentsImages[RES], RES);
+        if(menu.Get_Type() == "Voltage Source") NewItem = new GraphicsItem(ComponentsImages[IVS], IVS, ui->graphicsView);
+        else if(menu.Get_Type() == "Current Source") NewItem = new GraphicsItem(ComponentsImages[ICS], ICS, ui->graphicsView);
+        else if(menu.Get_Type() == "Resistor") NewItem = new GraphicsItem(ComponentsImages[RES], RES, ui->graphicsView);
         ui->graphicsView->AddToGV(NewItem);
     }
 }

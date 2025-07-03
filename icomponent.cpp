@@ -13,7 +13,11 @@ bool IComponent::SetNodes(int S, int E){
     _EndNode = E;
     return true;
 }
-bool IComponent::SetValue(double val){
+bool IComponent::SetValue(double val, bool Wire){
+    if(Wire) {
+        _Value = 0;
+        return true;
+    }
     if(val <= 0) return false;
     _Value = val;
     return true;
