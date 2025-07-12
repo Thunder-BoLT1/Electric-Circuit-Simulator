@@ -7,8 +7,8 @@ bool IComponent::SetName(QString name){
     _Name = name;
     return true;
 }
-bool IComponent::SetNodes(int S, int E){
-    if( S < 0 || E < 0 || S <= E) return false;
+bool IComponent::SetNodes(Vertex* S, Vertex* E){
+    if(S == E) return false;
     _StartNode = S;
     _EndNode = E;
     return true;
@@ -30,7 +30,7 @@ void IComponent::SetVoltage(double vol){
 }
 //getter functions
 QString IComponent::GetName(){ return _Name; }
-void IComponent::GetNodes(int& S, int& E){ S = _StartNode; E = _EndNode; }
+void IComponent::GetNodes(Vertex*& S, Vertex*& E){ S = _StartNode; E = _EndNode; }
 double IComponent::GetValue() { return _Value; }
 double IComponent::GetCurrent() { return _Current; }
 double IComponent::GetVoltage() { return _Voltage; }

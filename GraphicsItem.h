@@ -9,6 +9,7 @@
 #include "items.h"
 #include <QRectF>
 #include <independentinputdialog.h>
+#include <resultsdialog.h>
 #include <QMessageBox>
 
 class GraphicsView;

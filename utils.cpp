@@ -48,7 +48,6 @@ namespace Utils{
                 }
             }
         }
-        qDebug() << curr->G_cost << curr->H_cost;
         return false;
     }
     QList<QPointF> ShortestPath(QVector<QVector<Vertex>> & Grid, int Start, int End){

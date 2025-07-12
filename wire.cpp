@@ -1,10 +1,14 @@
 #include "wire.h"
+#include "graphicsview.h"
 #define Radius 4
 
 QPen Wire::WirePen(Qt::red, 2);
 QBrush Wire::WireBrush(Qt::red);
 
-Wire::Wire(QPointF start):StartPos(Utils::GetNearestGridPoint(start)){
+Wire::Wire(GraphicsView* View, QPointF start):StartPos(Utils::GetNearestGridPoint(start)){
+    view = View;
+    Component = new IVSItem;
+    Component->SetValue(0, true);
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable |QGraphicsItem::ItemHasNoContents);
     //Create Items Associated with each wire
     Line = new QGraphicsPathItem(this);
@@ -42,9 +46,11 @@ void Wire::AdjustEndPoint(QVector<QVector<Vertex>> & Grid, QPointF End){
     }
 }
 
-void Wire::GetWireConnection(int& s, int& e){
-    s = StartNode->pos().x() / 30 + (StartNode->pos().y() / 30) * 31 ;
-    e = EndNode->pos().x() / 30 + (EndNode->pos().y() / 30) * 31 ;
+IComponent* Wire::GetComponent(){ return Component; }
+
+void Wire::FixWireNodes(QVector<QVector<Vertex>> & Grid){
+    int SGID = Utils::GetGridID(StartPos), EGID = Utils::GetGridID(EndPos);
+    Component->SetNodes(&Grid[SGID/31][SGID%31], &Grid[EGID/31][EGID%31]);
 }
 
 QRectF Wire::boundingRect() const
@@ -60,7 +66,7 @@ void Wire::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 void Wire::mousePressEvent(QGraphicsSceneMouseEvent* event){
     if(event->button() == Qt::RightButton){
         QMenu menu;
-        menu.addAction(QIcon(QDir::currentPath() + "\\remove.png"), "Delete", [this](){this->scene()->removeItem(this); delete this;});
+        menu.addAction(QIcon(QDir::currentPath() + "\\remove.png"), "Delete", [this](){view->RemoveItemFromNetlist(Component);this->scene()->removeItem(this); delete this;});
         menu.exec(event->screenPos());
     }
 }

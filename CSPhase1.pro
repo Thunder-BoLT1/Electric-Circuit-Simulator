@@ -17,6 +17,7 @@ SOURCES += \
     independentinputdialog.cpp \
     items.cpp \
     main.cpp \
+    resultsdialog.cpp \
     utils.cpp \
     vertex.cpp \
     widget.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     icomponent.h \
     independentinputdialog.h \
     items.h \
+    resultsdialog.h \
     utils.h \
     vertex.h \
     widget.h \
@@ -37,6 +39,8 @@ HEADERS += \
 
 FORMS += \
     widget.ui
+
+INCLUDEPATH += "E:/Eigen Library C++/eigen-3.4.0"
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

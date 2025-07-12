@@ -43,11 +43,10 @@ void GraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event){
     }
     else if(event->button() == Qt::RightButton){
         QMenu menu;
-        menu.addAction(QIcon(QDir::currentPath() + "\\rotateRight.png"),"Rotate ClockWise", [this](){this->setRotation(int(this->rotation() + 90) % 360);});
-        menu.addAction(QIcon(QDir::currentPath() + "\\rotateLeft.png"), "Rotate Anti-ClockWise", [this](){this->setRotation(int(this->rotation() - 90) % 360);});
-        menu.addAction(QIcon(QDir::currentPath() + "\\duplicate.png"), "Duplicate", [this]() {
-            emit duplicateRequest(this);});
-        menu.addAction(QIcon(QDir::currentPath() + "\\remove.png"), "Delete", [this](){View->RemoveItemFromGrid(this); this->scene()->removeItem(this); delete this;});
+        menu.addAction(QIcon(QDir::currentPath() + "\\rotateRight.png"),"Rotate ClockWise", [this](){this->setRotation(int(this->rotation() + 90) % 360); View->AddItemToGrid(this);});
+        menu.addAction(QIcon(QDir::currentPath() + "\\rotateLeft.png"), "Rotate Anti-ClockWise", [this](){this->setRotation(int(this->rotation() - 90) % 360); View->AddItemToGrid(this);});
+        menu.addAction(QIcon(QDir::currentPath() + "\\duplicate.png"), "Duplicate", [this]() {emit duplicateRequest(this);});
+        menu.addAction(QIcon(QDir::currentPath() + "\\remove.png"), "Delete", [this](){ View->RemoveItemFromNetlist(this->GetComponent()); View->RemoveItemFromGrid(this); this->scene()->removeItem(this); delete this;});
         menu.exec(event->screenPos());
     }
     QGraphicsPixmapItem::mousePressEvent(event);
@@ -70,24 +69,29 @@ void GraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event){
 
 void GraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     //Open DIALOGUE FOR USER INPUTS
-    IndependentInputDialog Input;
-    if(Input.exec() == QDialog::Accepted){
-        bool Operation1 = GetComponent()->SetName(Input.Get_Name());
-        bool Operation2 =  GetComponent()->SetValue(Input.Get_Value());
-        //Invalid Inputs
-        if(!Operation1){
-            QMessageBox msg;
-            msg.setWindowTitle("Error");
-            msg.setText("Invalid Component Name");
-            msg.setIcon(QMessageBox::Warning);
-            msg.exec();
-        }else if(!Operation2){
-            QMessageBox msg;
-            msg.setWindowTitle("Error");
-            msg.setText("Invalid Component Value");
-            msg.setIcon(QMessageBox::Warning);
-            msg.exec();
+    if(View->GetMode() == Design){
+        IndependentInputDialog Input(Component->GetName(), Component->GetValue());
+        if(Input.exec() == QDialog::Accepted){
+            bool Operation1 = GetComponent()->SetName(Input.Get_Name());
+            bool Operation2 =  GetComponent()->SetValue(Input.Get_Value());
+            //Invalid Inputs
+            if(!Operation1){
+                QMessageBox msg;
+                msg.setWindowTitle("Error");
+                msg.setText("Invalid Component Name");
+                msg.setIcon(QMessageBox::Warning);
+                msg.exec();
+            }else if(!Operation2){
+                QMessageBox msg;
+                msg.setWindowTitle("Error");
+                msg.setText("Invalid Component Value");
+                msg.setIcon(QMessageBox::Warning);
+                msg.exec();
+            }
         }
+    }else{
+        ResultsDialog Result(Component);
+        Result.exec();
     }
     QGraphicsItem::mouseDoubleClickEvent(event);
 }

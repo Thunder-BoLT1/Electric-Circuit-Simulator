@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <widget class="GrahpicsView" name="graphicsView">
+  <widget class="GraphicsView" name="graphicsView">
    <property name="geometry">
     <rect>
      <x>300</x>
@@ -26,9 +26,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GrahpicsView</class>
+   <class>GraphicsView</class>
    <extends>QGraphicsView</extends>
-   <header>grahpicsview.h</header>
+   <header location="global">graphicsview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

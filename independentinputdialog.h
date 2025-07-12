@@ -13,7 +13,7 @@ class IndependentInputDialog: public QDialog
     QLineEdit* name, *value;
     QPushButton*  ok, * cancel;
 public:
-    IndependentInputDialog();
+    IndependentInputDialog(QString, double);
     //Getters For the Inputs
     QString Get_Name();
     double Get_Value();

@@ -1,13 +1,15 @@
 #include "independentinputdialog.h"
 #include <QDir>
 
-IndependentInputDialog::IndependentInputDialog() {
+IndependentInputDialog::IndependentInputDialog(QString n, double v) {
 
     setWindowTitle("Attributes");
     setWindowIcon(QIcon(QDir::currentPath() + "\\input.png"));
     //Set LineEdits (this) is important for automatic memory allocation as it makes QT handles it Automatically with the main widget
     name = new QLineEdit(this);
+    name->setPlaceholderText(n);
     value = new QLineEdit(this);
+    value->setPlaceholderText(QString::number(v));
     //Set PushButtons
     ok = new QPushButton(this);
     ok->setText("OK");

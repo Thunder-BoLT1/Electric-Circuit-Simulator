@@ -41,7 +41,7 @@ private:
 
 private slots:
     void OpenComponenetsMenu();
-    void RunSimulation();
+    void RunSimulation(bool);
     void ClearGV();
 };
 #endif // WIDGET_H

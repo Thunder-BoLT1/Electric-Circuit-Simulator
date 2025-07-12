@@ -21,10 +21,14 @@ struct hash<Vertex> {
 };
 }
 */
+enum Mode{
+    Design,
+    Run
+};
 class GraphicsView: public QGraphicsView
 {
     GraphicsItem* MovingItem;
-    QVector<GraphicsItem*> NetList;
+    QVector<IComponent*> NetList;
     QVector<Wire*> Wires;
     QVector<QVector<Vertex>> Grid; //0 For Free 1 For Blcoked (ie. Circuit Elemnt Exists)
     /*I will use an unorderedmap to store the graph each vertix will be a constant number depending on the position in the grid then for each node (ie. vertix)
@@ -33,6 +37,7 @@ class GraphicsView: public QGraphicsView
     std::pmr::unordered_map<int, QVector<std::pair<int, IComponent*>>> Graph;
     //For wiring feature
     Wire* CurrWire;
+    Mode currMode;
 public:
     GraphicsView(QWidget * widget = nullptr);
     void SetMovingItem(GraphicsItem* Item = nullptr);
@@ -40,9 +45,17 @@ public:
     GraphicsItem* GetMovingItem();
     void ResetGV();
     void BuildGraph();
+    void RemoveItemFromNetlist(IComponent*);
     void RemoveItemFromGrid(GraphicsItem*);
     void AddItemToGrid(GraphicsItem*);
+    void GetElementNodes(GraphicsItem*, Vertex*&, Vertex*&);
+    void RunSimulation();
+    int NumberNodes();
+    void BuildMatrix(Eigen::MatrixXd &, Eigen::MatrixXd &);
+    void UpdateComponents(Eigen::MatrixXd &, int);
     void ResetGrid();
+    Mode GetMode();
+    void ToggleMode();
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;

@@ -33,12 +33,18 @@ void Widget::MenuInit(){
     QAction* Components = new QAction(QIcon(DirPath + "\\resistor.png"), "Components", this);
     QAction* Run = new QAction(QIcon(DirPath + "\\playButton.png"), "Run", this);
     QAction* Clear = new QAction(QIcon(DirPath + "\\delete.png"), "Clear", this);
+    Run->setCheckable(true);
     MenuBar->addAction(Components);
     MenuBar->addAction(Run);
     MenuBar->addAction(Clear);
     MenuBar->resize(1200, 21);
     connect(Components, &QAction::triggered, this, &Widget::OpenComponenetsMenu);
-    connect(Run, &QAction::triggered, this, &Widget::RunSimulation);
+    connect(Run, &QAction::toggled, this, [=](bool checked){
+        if(checked) Run->setIcon(QIcon(DirPath + "\\pause.png"));
+        else Run->setIcon(QIcon(DirPath + "\\playButton.png"));
+        RunSimulation(checked);
+    });
+
     connect(Clear, &QAction::triggered, this, &Widget::ClearGV);
 }
 
@@ -53,8 +59,9 @@ void Widget::OpenComponenetsMenu(){
     }
 }
 
-void Widget::RunSimulation(){
-    ui->graphicsView->BuildGraph();
+void Widget::RunSimulation(bool checked){
+    if(checked) ui->graphicsView->RunSimulation();
+    ui->graphicsView->ToggleMode();
 }
 
 void Widget::ClearGV(){
