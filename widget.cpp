@@ -55,6 +55,10 @@ void Widget::OpenComponenetsMenu(){
         if(menu.Get_Type() == "Voltage Source") NewItem = new GraphicsItem(ComponentsImages[IVS], IVS, ui->graphicsView);
         else if(menu.Get_Type() == "Current Source") NewItem = new GraphicsItem(ComponentsImages[ICS], ICS, ui->graphicsView);
         else if(menu.Get_Type() == "Resistor") NewItem = new GraphicsItem(ComponentsImages[RES], RES, ui->graphicsView);
+        else if(menu.Get_Type() == "VCVS") NewItem = new GraphicsItem(ComponentsImages[VCVS], VCVS, ui->graphicsView);
+        else if(menu.Get_Type() == "VCCS") NewItem = new GraphicsItem(ComponentsImages[VCCS], VCCS, ui->graphicsView);
+        else if(menu.Get_Type() == "CCVS") NewItem = new GraphicsItem(ComponentsImages[CCVS], CCVS, ui->graphicsView);
+        else if(menu.Get_Type() == "CCCS") NewItem = new GraphicsItem(ComponentsImages[CCCS], CCCS, ui->graphicsView);
         ui->graphicsView->AddToGV(NewItem);
     }
 }

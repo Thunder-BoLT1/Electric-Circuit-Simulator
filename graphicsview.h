@@ -44,11 +44,10 @@ public:
     void AddToGV(GraphicsItem* Item);
     GraphicsItem* GetMovingItem();
     void ResetGV();
-    void BuildGraph();
     void RemoveItemFromNetlist(IComponent*);
     void RemoveItemFromGrid(GraphicsItem*);
     void AddItemToGrid(GraphicsItem*);
-    void GetElementNodes(GraphicsItem*, Vertex*&, Vertex*&);
+    void SetElementNodes(GraphicsItem*);
     void RunSimulation();
     int NumberNodes();
     void BuildMatrix(Eigen::MatrixXd &, Eigen::MatrixXd &);

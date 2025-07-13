@@ -3,7 +3,7 @@
 
 QPointF GraphicsItem::PressPos, GraphicsItem::Offset;
 
-GraphicsItem::GraphicsItem(QPixmap Image, Components Type, GraphicsView* view):QGraphicsPixmapItem(Image.scaled(60, 60,Qt::KeepAspectRatio, Qt::SmoothTransformation)){
+GraphicsItem::GraphicsItem(QPixmap Image, Components Type, GraphicsView* view):QGraphicsPixmapItem(Image){
     //Set Important Attributes
     this->setFlag(ItemIsMovable);
     this->setOffset(-30, -30);  //To Rotate the Item Aroud it's Center Not Around the TopLeft Corner
@@ -19,6 +19,18 @@ GraphicsItem::GraphicsItem(QPixmap Image, Components Type, GraphicsView* view):Q
         break;
     case RES:
         Component = new RESItem;
+        break;
+    case VCVS:
+        Component = new VCVSItem;
+        break;
+    case VCCS:
+        Component = new VCCSItem;
+        break;
+    case CCVS:
+        Component = new CCVSItem;
+        break;
+    case CCCS:
+        Component = new CCCSItem;
         break;
     }
     View = view;
@@ -43,8 +55,8 @@ void GraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event){
     }
     else if(event->button() == Qt::RightButton){
         QMenu menu;
-        menu.addAction(QIcon(QDir::currentPath() + "\\rotateRight.png"),"Rotate ClockWise", [this](){this->setRotation(int(this->rotation() + 90) % 360); View->AddItemToGrid(this);});
-        menu.addAction(QIcon(QDir::currentPath() + "\\rotateLeft.png"), "Rotate Anti-ClockWise", [this](){this->setRotation(int(this->rotation() - 90) % 360); View->AddItemToGrid(this);});
+        menu.addAction(QIcon(QDir::currentPath() + "\\rotateRight.png"),"Rotate ClockWise", [this](){View->RemoveItemFromGrid(this); this->setRotation(int(this->rotation() + 90) % 360); View->AddItemToGrid(this);});
+        menu.addAction(QIcon(QDir::currentPath() + "\\rotateLeft.png"), "Rotate Anti-ClockWise", [this](){View->RemoveItemFromGrid(this); this->setRotation(int(this->rotation() - 90) % 360); View->AddItemToGrid(this);});
         menu.addAction(QIcon(QDir::currentPath() + "\\duplicate.png"), "Duplicate", [this]() {emit duplicateRequest(this);});
         menu.addAction(QIcon(QDir::currentPath() + "\\remove.png"), "Delete", [this](){ View->RemoveItemFromNetlist(this->GetComponent()); View->RemoveItemFromGrid(this); this->scene()->removeItem(this); delete this;});
         menu.exec(event->screenPos());
@@ -60,7 +72,7 @@ void GraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event){
 void GraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event){
     if(event->button() == Qt::LeftButton){
         QPointF NewPos = Utils::GetNearestGridPoint(event->scenePos());
-        if(NewPos.x() <= 0 || NewPos.x() >= 900 || NewPos.y() <= 0 || NewPos.y() >= 600) NewPos = PressPos; // If Invalid Position (Out of the Grid) Return to The initial Press Position
+        if(NewPos.x() <= 0 || NewPos.x() >= 900 || NewPos.y() <= 30 || NewPos.y() >= 570) NewPos = PressPos; // If Invalid Position (Out of the Grid) Return to The initial Press Position
         this->setPos(NewPos);
         View->AddItemToGrid(this);
     }

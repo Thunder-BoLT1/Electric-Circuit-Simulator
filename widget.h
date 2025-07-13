@@ -1,7 +1,6 @@
 #ifndef WIDGET_H
 #define WIDGET_H
-#define ComponentsCount 3
-
+#define ComponentsCount 7
 #include <QWidget>
 #include <QGraphicsScene>
 #include <qDebug>
@@ -24,7 +23,8 @@ class Widget : public QWidget
 {
     Q_OBJECT
     QString DirPath = QDir::currentPath();
-    QPixmap ComponentsImages[ComponentsCount] = {QPixmap(DirPath + "\\IVS.png"), QPixmap(DirPath + "\\ICS.png"),QPixmap(DirPath + "\\RES2.png")};;
+    QPixmap ComponentsImages[ComponentsCount] = {QPixmap(DirPath + "\\IVS.png"), QPixmap(DirPath + "\\ICS.png"),QPixmap(DirPath + "\\RES2.png"),
+    QPixmap(DirPath + "\\VCVS.png"), QPixmap(DirPath + "\\VCCS.png"), QPixmap(DirPath + "\\CCVS.png"), QPixmap(DirPath + "\\CCCS.png")};;
 
 public:
     Widget(QWidget *parent = nullptr);

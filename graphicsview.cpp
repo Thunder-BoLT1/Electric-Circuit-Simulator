@@ -89,32 +89,46 @@ void GraphicsView::AddToGV(GraphicsItem* Item){
     }
 }
 
-void GraphicsView::GetElementNodes(GraphicsItem* item, Vertex*& s, Vertex*& e){
+void GraphicsView::SetElementNodes(GraphicsItem* item){
     int GridId = Utils::GetGridID(item->pos()) ;
-    int SnodeGId = -1 , EnodeGId = -1;
+    int SnodeGId = -1 , EnodeGId = -1, SCnodeGId = -1, ECnodeGId = -1;
+    Vertex* StartNode = nullptr, *EndNode = nullptr, *SCNode = nullptr, *ECNode = nullptr;
     switch(abs(int(item->rotation()))){
     case 0:
         SnodeGId = GridId - 1;
         EnodeGId = GridId + 1;
+        SCnodeGId = SnodeGId + 62;
+        ECnodeGId = EnodeGId + 62;
         break;
     case 180:
         SnodeGId = GridId + 1;
         EnodeGId = GridId - 1;
+        SCnodeGId = SnodeGId - 62;
+        ECnodeGId = EnodeGId - 62;
         break;
     case 90:
-        SnodeGId = GridId + 31;
-        EnodeGId = GridId - 31;
-        break;
-    case 270:
         SnodeGId = GridId - 31;
         EnodeGId = GridId + 31;
+        SCnodeGId = SnodeGId - 2;
+        ECnodeGId = EnodeGId - 2;
+        break;
+    case 270:
+        SnodeGId = GridId + 31;
+        EnodeGId = GridId - 31;
+        SCnodeGId = SnodeGId + 2;
+        ECnodeGId = EnodeGId + 2;
         break;
     }
-    s = &Grid[SnodeGId/31][SnodeGId%31];
-    e = &Grid[EnodeGId/31][EnodeGId%31];
-}
-
-void GraphicsView::BuildGraph(){ 
+    StartNode = &Grid[SnodeGId/31][SnodeGId%31];
+    EndNode = &Grid[EnodeGId/31][EnodeGId%31];
+    SCNode = &Grid[SCnodeGId/31][SCnodeGId%31];
+    ECNode = &Grid[ECnodeGId/31][ECnodeGId%31];
+    DComponent* Component = dynamic_cast<DComponent*>(item->GetComponent());
+    if(Component){
+        Component->SetNodes(SCNode, ECNode);
+        Component->SetCtrNodes(StartNode, EndNode);
+    }else
+        item->GetComponent()->SetNodes(StartNode, EndNode);
 }
 
 int GraphicsView::NumberNodes(){
@@ -191,15 +205,56 @@ void GraphicsView::RemoveItemFromNetlist(IComponent *Item){
 }
 
 void GraphicsView::RemoveItemFromGrid(GraphicsItem *Item){
-    Grid[int(Item->pos().y())/30][int(Item->pos().x())/30].hasItem = false;
-    Item->GetComponent()->SetNodes(nullptr, nullptr);
+    int row = Item->pos().y()/30, col = Item->pos().x()/30;
+    Grid[row][col].hasItem = false;
+    DComponent *Component = dynamic_cast<DComponent*>(Item->GetComponent());
+    if(Component){
+        switch(abs(int(Item->rotation()))){
+        case 0:
+            Grid[row+1][col].hasItem = false;
+            Grid[row+2][col].hasItem = false;
+            break;
+        case 180:
+            Grid[row-1][col].hasItem = false;
+            Grid[row-2][col].hasItem = false;
+            break;
+        case 90:
+            Grid[row][col-1].hasItem = false;
+            Grid[row][col-2].hasItem = false;
+            break;
+        case 270:
+            Grid[row][col+1].hasItem = false;
+            Grid[row][col+2].hasItem = false;
+            break;
+        }
+    }
 }
 
 void GraphicsView::AddItemToGrid(GraphicsItem *Item){
-    Grid[int(Item->pos().y())/30][int(Item->pos().x())/30].hasItem = true;
-    Vertex* SNode = nullptr, *ENode = nullptr;
-    GetElementNodes(Item, SNode, ENode);
-    Item->GetComponent()->SetNodes(SNode, ENode);
+    int row = Item->pos().y()/30, col = Item->pos().x()/30;
+    Grid[row][col].hasItem = true;
+    DComponent *Component = dynamic_cast<DComponent*>(Item->GetComponent());
+    if(Component){
+        switch(abs(int(Item->rotation()))){
+        case 0:
+            Grid[row+1][col].hasItem = true;
+            Grid[row+2][col].hasItem = true;
+            break;
+        case 180:
+            Grid[row-1][col].hasItem = true;
+            Grid[row-2][col].hasItem = true;
+            break;
+        case 90:
+            Grid[row][col-1].hasItem = true;
+            Grid[row][col-2].hasItem = true;
+            break;
+        case 270:
+            Grid[row][col+1].hasItem = true;
+            Grid[row][col+2].hasItem = true;
+            break;
+        }
+    }
+    SetElementNodes(Item);
 }
 
 void GraphicsView::ResetGrid(){
