@@ -86,7 +86,7 @@ We use **shortest path algorithms** to draw minimal and non-overlapping wire pat
 Pull requests are welcome!
 If you're interested in adding new components, improving the UI, or implementing transient simulation, feel free to fork and contribute.
 
-**Author**
+**Author**  
 Mazen Ahmed Abd Elkawy (Thunder-BoLT1)
 
 ### 🧰 Steps
