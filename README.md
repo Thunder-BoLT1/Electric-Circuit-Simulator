@@ -71,6 +71,7 @@ We use **shortest path algorithms** to draw minimal and non-overlapping wire pat
 
 ## 📷 Screenshots
 
+![image alt](https://github.com/Thunder-BoLT1/Electric-Circuit-Simulator/blob/d9874c56e58d5a6c3c06fc6019caf7f1b6c406bb/C1Sim.png)
 
 ---
 
