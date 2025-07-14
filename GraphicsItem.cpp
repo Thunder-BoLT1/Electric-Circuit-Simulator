@@ -56,7 +56,7 @@ void GraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event){
     else if(event->button() == Qt::RightButton){
         QMenu menu;
         menu.addAction(QIcon(QDir::currentPath() + "\\rotateRight.png"),"Rotate ClockWise", [this](){View->RemoveItemFromGrid(this); this->setRotation(int(this->rotation() + 90) % 360); View->AddItemToGrid(this);});
-        menu.addAction(QIcon(QDir::currentPath() + "\\rotateLeft.png"), "Rotate Anti-ClockWise", [this](){View->RemoveItemFromGrid(this); this->setRotation(int(this->rotation() - 90) % 360); View->AddItemToGrid(this);});
+        menu.addAction(QIcon(QDir::currentPath() + "\\rotateLeft.png"), "Rotate Anti-ClockWise", [this](){View->RemoveItemFromGrid(this); this->setRotation(int(this->rotation() + 270) % 360); View->AddItemToGrid(this);});
         menu.addAction(QIcon(QDir::currentPath() + "\\duplicate.png"), "Duplicate", [this]() {emit duplicateRequest(this);});
         menu.addAction(QIcon(QDir::currentPath() + "\\remove.png"), "Delete", [this](){ View->RemoveItemFromNetlist(this->GetComponent()); View->RemoveItemFromGrid(this); this->scene()->removeItem(this); delete this;});
         menu.exec(event->screenPos());

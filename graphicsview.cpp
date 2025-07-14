@@ -127,6 +127,7 @@ void GraphicsView::SetElementNodes(GraphicsItem* item){
     if(Component){
         Component->SetNodes(SCNode, ECNode);
         Component->SetCtrNodes(StartNode, EndNode);
+        qDebug() << item->rotation() << StartNode->GridID << EndNode->GridID << SCNode->GridID << ECNode->GridID;
     }else
         item->GetComponent()->SetNodes(StartNode, EndNode);
 }

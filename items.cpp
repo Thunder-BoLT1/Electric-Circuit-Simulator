@@ -174,8 +174,8 @@ void VCVSItem::WriteToMatrix(Eigen::MatrixXd &GMatrix, Eigen::MatrixXd &CMatrix)
         GMatrix(EndNode - 1, oldSize) += 1;
         GMatrix(oldSize, EndNode - 1) += 1;
     }
-    if (StartCtrNode) GMatrix(oldSize, StartCtrNode - 1) += -Value;
-    if (EndCtrNode) GMatrix(oldSize, EndCtrNode - 1) += Value;
+    if (StartCtrNode) GMatrix(oldSize, StartCtrNode - 1) += Value;
+    if (EndCtrNode) GMatrix(oldSize, EndCtrNode - 1) += -Value;
 
 }
 
@@ -261,11 +261,60 @@ CCVSItem::CCVSItem(){
 }
 //Override Pure Virtual Function For RES
 void CCVSItem::WriteToMatrix(Eigen::MatrixXd &GMatrix, Eigen::MatrixXd &CMatrix){
+    //Add 2 new Rows and Columns of zeros to the end it's also the First New Row/Column Index :D
+    int oldSize = GMatrix.rows();
+    GMatrix.conservativeResize(oldSize + 2, oldSize + 2);
+    CMatrix.conservativeResize(oldSize + 2, Eigen::NoChange);
+    GMatrix.row(oldSize).setZero();
+    GMatrix.row(oldSize+1).setZero();
+    GMatrix.col(oldSize).setZero();
+    GMatrix.col(oldSize+1).setZero();
+    CMatrix.row(oldSize).setZero();
+    CMatrix.row(oldSize+1).setZero();
 
+    Vertex* StartVertex = nullptr, *EndVertex = nullptr, *StartCtrVertex = nullptr, *EndCtrVertex = nullptr;
+    GetNodes(StartVertex, EndVertex);
+    GetCtrNodes(StartCtrVertex, EndCtrVertex);
+    int StartNode = StartVertex->NodeID , EndNode = EndVertex->NodeID, StartCtrNode = StartCtrVertex->NodeID, EndCtrNode = EndCtrVertex->NodeID;
+    double Value = GetValue();
+
+    if(StartNode){
+        GMatrix(StartNode - 1, oldSize + 1) = -1;
+        GMatrix(oldSize + 1, StartNode - 1) = -1;
+    }
+    if(EndNode){
+        GMatrix(EndNode - 1, oldSize + 1) = 1;
+        GMatrix(oldSize + 1, EndNode - 1) = 1;
+    }
+    if(EndCtrNode) {
+        GMatrix(EndCtrNode - 1, oldSize) = -1;
+        GMatrix(oldSize, EndCtrNode - 1) = -1;
+    }
+    if(StartCtrNode){
+        GMatrix(StartCtrNode - 1, oldSize) = 1;
+        GMatrix(oldSize, StartCtrNode - 1) = 1;
+    }
+    GMatrix(oldSize + 1, oldSize) = -Value;
 }
 
 void CCVSItem::ReadFromMatrix(Eigen::MatrixXd &Result, int& newRowIndex){
+    Vertex* StartVertex = nullptr, *EndVertex = nullptr, *StartCtrVertex = nullptr, *EndCtrVertex = nullptr;
+    GetNodes(StartVertex, EndVertex);
+    GetCtrNodes(StartCtrVertex, EndCtrVertex);
+    int StartNode = StartVertex->NodeID , EndNode = EndVertex->NodeID, StartCtrNode = StartCtrVertex->NodeID, EndCtrNode = EndCtrVertex->NodeID;
 
+    double VD = 0;
+    if (StartNode && EndNode) VD = Result(StartNode - 1, 0) - Result(EndNode - 1, 0) ;
+    else if (EndNode) VD = -Result(EndNode - 1, 0);
+    else VD = Result(StartNode - 1, 0);
+    if(abs(VD) < 1e-5) VD = 0;
+
+    double I = GetValue() * Result(newRowIndex + 1, 0);
+    newRowIndex += 2;
+    if(abs(I) < 1e-5) I = 0;
+
+    SetVoltage(VD);
+    SetCurrent(I);
 }
 
 IComponent* CCVSItem::CreateCopy(){
@@ -284,11 +333,51 @@ CCCSItem::CCCSItem(){
 }
 //Override Pure Virtual Function For RES
 void CCCSItem::WriteToMatrix(Eigen::MatrixXd &GMatrix, Eigen::MatrixXd &CMatrix){
+    (void)CMatrix; // This to Igonre Compilers Warning of unused parameters
 
+    //Add new Row and Column of zeros to the end it's also the New Row/Column Index :D
+    int oldSize = GMatrix.rows();
+    GMatrix.conservativeResize(oldSize + 1, oldSize + 1);
+    CMatrix.conservativeResize(oldSize + 1, Eigen::NoChange);
+    GMatrix.row(oldSize).setZero();
+    GMatrix.col(oldSize).setZero();
+    CMatrix.row(oldSize).setZero();
+
+    Vertex* StartVertex = nullptr, *EndVertex = nullptr, *StartCtrVertex = nullptr, *EndCtrVertex = nullptr;
+    GetNodes(StartVertex, EndVertex);
+    GetCtrNodes(StartCtrVertex, EndCtrVertex);
+    int StartNode = StartVertex->NodeID , EndNode = EndVertex->NodeID, StartCtrNode = StartCtrVertex->NodeID, EndCtrNode = EndCtrVertex->NodeID;
+    double Value = GetValue();
+
+    if(StartNode) GMatrix(StartNode - 1, oldSize) = Value;
+    if(EndNode)   GMatrix(EndNode - 1, oldSize) = -Value;
+    if(EndCtrNode){
+        GMatrix(EndCtrNode - 1, oldSize) = -1;
+        GMatrix(oldSize, EndCtrNode - 1) = -1;
+    }
+    if(StartCtrNode){
+        GMatrix(StartCtrNode - 1, oldSize) = 1;
+        GMatrix(oldSize, StartCtrNode - 1) = 1;
+    }
 }
 
 void CCCSItem::ReadFromMatrix(Eigen::MatrixXd &Result, int& newRowIndex){
+    Vertex* StartVertex = nullptr, *EndVertex = nullptr, *StartCtrVertex = nullptr, *EndCtrVertex = nullptr;
+    GetNodes(StartVertex, EndVertex);
+    GetCtrNodes(StartCtrVertex, EndCtrVertex);
+    int StartNode = StartVertex->NodeID , EndNode = EndVertex->NodeID, StartCtrNode = StartCtrVertex->NodeID, EndCtrNode = EndCtrVertex->NodeID;
 
+    double VD = 0;
+    if (StartNode && EndNode) VD = Result(StartNode - 1, 0) - Result(EndNode - 1, 0) ;
+    else if (EndNode) VD = -Result(EndNode - 1, 0);
+    else VD = Result(StartNode - 1, 0);
+    if(abs(VD) < 1e-5) VD = 0;
+
+    double I = GetValue() * Result(newRowIndex++, 0);
+    if(abs(I) < 1e-5) I = 0;
+
+    SetVoltage(VD);
+    SetCurrent(I);
 }
 
 IComponent* CCCSItem::CreateCopy(){
