@@ -5,16 +5,16 @@ GraphicsView::GraphicsView(QWidget * widget): QGraphicsView(widget) {
     MovingItem = nullptr;
     CurrWire = nullptr;
     currMode = Design;
-    Grid = QVector<QVector<Vertex>>(21);
-    for(int i = 0; i < 21; i++) {
-        Grid[i].reserve(31);
-        for(int j = 0; j < 31; j++) Grid[i].append(Vertex());
+    Grid = QVector<QVector<Vertex>>(25);
+    for(int i = 0; i < 25; i++) {
+        Grid[i].reserve(35);
+        for(int j = 0; j < 35; j++) Grid[i].append(Vertex());
     }
     this->setMouseTracking(true);
 }
 void GraphicsView::mousePressEvent(QMouseEvent* event){
     if(MovingItem){
-        if(event->button() == Qt::LeftButton && Utils::isCorrectPos(Utils::GetNearestGridPoint(event->pos()))){
+        if(event->button() == Qt::LeftButton){
             NetList.push_back(MovingItem->GetComponent());
             AddItemToGrid(MovingItem);
             MovingItem->setOpacity(1);
@@ -40,7 +40,7 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* event){
     if(MovingItem){
         QPointF NewPos = Utils::GetNearestGridPoint(event->pos());
         // If Invalid Position (Out of the Grid) Return to The initial Press Position
-        if(NewPos.x() > 0 && NewPos.x() < 900 && NewPos.y() > 0 && NewPos.y() < 600) MovingItem->setPos(NewPos);
+        if(Utils::isCorrectPos(NewPos)) MovingItem->setPos(NewPos);
     }else if(CurrWire){
         ResetGrid();
         CurrWire->AdjustEndPoint(Grid, event->pos());
@@ -95,32 +95,32 @@ void GraphicsView::SetElementNodes(GraphicsItem* item){
     case 0:
         SnodeGId = GridId - 1;
         EnodeGId = GridId + 1;
-        SCnodeGId = SnodeGId + 62;
-        ECnodeGId = EnodeGId + 62;
+        SCnodeGId = SnodeGId + 70;
+        ECnodeGId = EnodeGId + 70;
         break;
     case 180:
         SnodeGId = GridId + 1;
         EnodeGId = GridId - 1;
-        SCnodeGId = SnodeGId - 62;
-        ECnodeGId = EnodeGId - 62;
+        SCnodeGId = SnodeGId - 70;
+        ECnodeGId = EnodeGId - 70;
         break;
     case 90:
-        SnodeGId = GridId - 31;
-        EnodeGId = GridId + 31;
+        SnodeGId = GridId - 35;
+        EnodeGId = GridId + 35;
         SCnodeGId = SnodeGId - 2;
         ECnodeGId = EnodeGId - 2;
         break;
     case 270:
-        SnodeGId = GridId + 31;
-        EnodeGId = GridId - 31;
+        SnodeGId = GridId + 35;
+        EnodeGId = GridId - 35;
         SCnodeGId = SnodeGId + 2;
         ECnodeGId = EnodeGId + 2;
         break;
     }
-    StartNode = &Grid[SnodeGId/31][SnodeGId%31];
-    EndNode = &Grid[EnodeGId/31][EnodeGId%31];
-    SCNode = &Grid[SCnodeGId/31][SCnodeGId%31];
-    ECNode = &Grid[ECnodeGId/31][ECnodeGId%31];
+    StartNode = &Grid[SnodeGId/35][SnodeGId%35];
+    EndNode = &Grid[EnodeGId/35][EnodeGId%35];
+    SCNode = &Grid[SCnodeGId/35][SCnodeGId%35];
+    ECNode = &Grid[ECnodeGId/35][ECnodeGId%35];
     DComponent* Component = dynamic_cast<DComponent*>(item->GetComponent());
     if(Component){
         Component->SetNodes(SCNode, ECNode);
@@ -151,12 +151,12 @@ int GraphicsView::NumberNodes(){
         if(eVertex->NodeID == -1) eVertex->NodeID = UniqueNodes++;
     }
     //FOR DEBUGGING PUPOSES ONLY WILL BE REMOVED AFTER
-    // qDebug() << "Unique nodes : " << n;
-    // for(int i = 0; i < n; i++){
-    //     Vertex* sVertex = nullptr, *eVertex = nullptr;
-    //     NetList[i]->GetNodes(sVertex, eVertex);
-    //     qDebug() << sVertex->NodeID << "  " << eVertex->NodeID;
-    // }
+    qDebug() << "Unique nodes : " << n;
+    for(int i = 0; i < n; i++){
+        Vertex* sVertex = nullptr, *eVertex = nullptr;
+        NetList[i]->GetNodes(sVertex, eVertex);
+        qDebug() << sVertex->NodeID << "  " << eVertex->NodeID;
+    }
     return UniqueNodes;
 }
 

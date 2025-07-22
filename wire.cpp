@@ -50,7 +50,7 @@ IComponent* Wire::GetComponent(){ return Component; }
 
 void Wire::FixWireNodes(QVector<QVector<Vertex>> & Grid){
     int SGID = Utils::GetGridID(StartPos), EGID = Utils::GetGridID(EndPos);
-    Component->SetNodes(&Grid[SGID/31][SGID%31], &Grid[EGID/31][EGID%31]);
+    Component->SetNodes(&Grid[SGID/35][SGID%35], &Grid[EGID/35][EGID%35]);
 }
 
 QRectF Wire::boundingRect() const

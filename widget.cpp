@@ -1,8 +1,8 @@
 #include "widget.h"
 #include "ui_widget.h"
 
-#define GridWidth 900
-#define GridHight 600
+#define GridWidth 1025
+#define GridHight 725
 #define GridSize 30
 
 Widget::Widget(QWidget *parent)
@@ -19,8 +19,8 @@ Widget::Widget(QWidget *parent)
 
 //Initalization Functions
 void Widget::SetupGrid(){
-    for(int i = 0; i < GridWidth; i += GridSize) scene->addLine(i, 0, i , GridHight, QPen(Qt::gray));
-    for(int i = 0; i < GridHight; i += GridSize) scene->addLine(0, i, GridWidth , i, QPen(Qt::gray));
+    for(int i = 0; i <= GridWidth; i += GridSize) scene->addLine(i, 0, i , GridHight, QPen(Qt::gray));
+    for(int i = 0; i <= GridHight; i += GridSize) scene->addLine(0, i, GridWidth , i, QPen(Qt::gray));
 }
 void Widget::GVInit(){
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
