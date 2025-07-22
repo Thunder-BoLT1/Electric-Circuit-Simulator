@@ -9,5 +9,6 @@ namespace Utils{
     int GetGridID(QPointF);
     bool AStar(QVector<QVector<Vertex>> & Grid, int Start, int End);
     QList<QPointF> ShortestPath(QVector<QVector<Vertex>> & Grid, int Start, int End);
+    bool isCorrectPos(QPointF);
 }
 #endif // UTILS_H

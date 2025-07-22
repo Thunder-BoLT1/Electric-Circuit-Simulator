@@ -9,6 +9,7 @@ class IComponent
     QString _Name;
     Vertex *_StartNode,* _EndNode;
     double _Value, _Current, _Voltage;
+    bool _Added;
 public:
     IComponent();
     virtual ~IComponent();

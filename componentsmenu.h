@@ -6,6 +6,7 @@
 #include <QHboxLayout>
 #include <QPushButton>
 #include <QMap>
+#include <QDir>
 
 class ComponentsMenu: public QDialog
 {

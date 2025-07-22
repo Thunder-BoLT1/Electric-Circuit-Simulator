@@ -13,6 +13,8 @@ Widget::Widget(QWidget *parent)
     scene = new QGraphicsScene;
     MenuInit();
     GVInit();
+    setWindowIcon(QIcon(DirPath + "\\electrical-circuit.png"));
+    setWindowTitle("CirQt");
 }
 
 //Initalization Functions

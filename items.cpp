@@ -20,7 +20,6 @@ void IVSItem::WriteToMatrix(Eigen::MatrixXd &GMatrix, Eigen::MatrixXd &CMatrix){
     GetNodes(StartVertex, EndVertex);
     int StartNode = StartVertex->NodeID , EndNode = EndVertex->NodeID;
     double Value = GetValue();
-
     if (EndNode) {
         GMatrix(oldSize, EndNode - 1) = 1;
         GMatrix(EndNode - 1, oldSize) = 1;

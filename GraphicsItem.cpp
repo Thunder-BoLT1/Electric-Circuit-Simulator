@@ -72,7 +72,7 @@ void GraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event){
 void GraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event){
     if(event->button() == Qt::LeftButton){
         QPointF NewPos = Utils::GetNearestGridPoint(event->scenePos());
-        if(NewPos.x() <= 0 || NewPos.x() >= 900 || NewPos.y() <= 30 || NewPos.y() >= 570) NewPos = PressPos; // If Invalid Position (Out of the Grid) Return to The initial Press Position
+        if(!Utils::isCorrectPos(NewPos)) NewPos = PressPos; // If Invalid Position (Out of the Grid) Return to The initial Press Position
         this->setPos(NewPos);
         View->AddItemToGrid(this);
     }
@@ -84,16 +84,9 @@ void GraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     if(View->GetMode() == Design){
         IndependentInputDialog Input(Component->GetName(), Component->GetValue());
         if(Input.exec() == QDialog::Accepted){
-            bool Operation1 = GetComponent()->SetName(Input.Get_Name());
-            bool Operation2 =  GetComponent()->SetValue(Input.Get_Value());
-            //Invalid Inputs
-            if(!Operation1){
-                QMessageBox msg;
-                msg.setWindowTitle("Error");
-                msg.setText("Invalid Component Name");
-                msg.setIcon(QMessageBox::Warning);
-                msg.exec();
-            }else if(!Operation2){
+            GetComponent()->SetName(Input.Get_Name());
+            bool Operation =  GetComponent()->SetValue(Input.Get_Value());
+            if(!Operation){
                 QMessageBox msg;
                 msg.setWindowTitle("Error");
                 msg.setText("Invalid Component Value");

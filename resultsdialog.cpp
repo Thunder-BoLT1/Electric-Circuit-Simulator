@@ -1,6 +1,8 @@
 #include "resultsdialog.h"
 
 ResultsDialog::ResultsDialog(IComponent* Component) {
+    setWindowTitle("Results");
+    setWindowIcon(QIcon(QDir::currentPath() + "\\research.png"));
     QFormLayout *MyFormLayout = new QFormLayout(this);
 
     Name = new QLineEdit(this);

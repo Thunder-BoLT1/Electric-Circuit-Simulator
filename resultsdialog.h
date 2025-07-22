@@ -4,6 +4,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QFormLayout>
+#include <QDir>
 #include "IComponent.h"
 
 class ResultsDialog: public QDialog

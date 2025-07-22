@@ -1,8 +1,7 @@
 #include "graphicsview.h"
 
-//Vertex::Vertex(int node){ NodeId = node; } Ignored for now
-
 GraphicsView::GraphicsView(QWidget * widget): QGraphicsView(widget) {
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     MovingItem = nullptr;
     CurrWire = nullptr;
     currMode = Design;
@@ -13,10 +12,9 @@ GraphicsView::GraphicsView(QWidget * widget): QGraphicsView(widget) {
     }
     this->setMouseTracking(true);
 }
-
 void GraphicsView::mousePressEvent(QMouseEvent* event){
     if(MovingItem){
-        if(event->button() == Qt::LeftButton){
+        if(event->button() == Qt::LeftButton && Utils::isCorrectPos(Utils::GetNearestGridPoint(event->pos()))){
             NetList.push_back(MovingItem->GetComponent());
             AddItemToGrid(MovingItem);
             MovingItem->setOpacity(1);
@@ -127,7 +125,6 @@ void GraphicsView::SetElementNodes(GraphicsItem* item){
     if(Component){
         Component->SetNodes(SCNode, ECNode);
         Component->SetCtrNodes(StartNode, EndNode);
-        qDebug() << item->rotation() << StartNode->GridID << EndNode->GridID << SCNode->GridID << ECNode->GridID;
     }else
         item->GetComponent()->SetNodes(StartNode, EndNode);
 }
@@ -140,6 +137,12 @@ int GraphicsView::NumberNodes(){
         NetList[i]->GetNodes(sVertex, eVertex);
         if(sVertex->NodeID == -1) sVertex->NodeID = UniqueNodes++;
         if(eVertex->NodeID == -1) eVertex->NodeID = UniqueNodes++;
+        DComponent* Component = dynamic_cast<DComponent*>(NetList[i]);
+        if(Component){
+            Component->GetCtrNodes(sVertex, eVertex);
+            if(sVertex->NodeID == -1) sVertex->NodeID = UniqueNodes++;
+            if(eVertex->NodeID == -1) eVertex->NodeID = UniqueNodes++;
+        }
     }
     for(int i = 0; i < m; i++){
         Vertex* sVertex = nullptr, *eVertex = nullptr;
@@ -148,12 +151,12 @@ int GraphicsView::NumberNodes(){
         if(eVertex->NodeID == -1) eVertex->NodeID = UniqueNodes++;
     }
     //FOR DEBUGGING PUPOSES ONLY WILL BE REMOVED AFTER
-    qDebug() << "Unique nodes : " << n;
-    for(int i = 0; i < n; i++){
-        Vertex* sVertex = nullptr, *eVertex = nullptr;
-        NetList[i]->GetNodes(sVertex, eVertex);
-        qDebug() << sVertex->NodeID << "  " << eVertex->NodeID;
-    }
+    // qDebug() << "Unique nodes : " << n;
+    // for(int i = 0; i < n; i++){
+    //     Vertex* sVertex = nullptr, *eVertex = nullptr;
+    //     NetList[i]->GetNodes(sVertex, eVertex);
+    //     qDebug() << sVertex->NodeID << "  " << eVertex->NodeID;
+    // }
     return UniqueNodes;
 }
 
@@ -165,15 +168,15 @@ void GraphicsView::RunSimulation(){
 
     BuildMatrix(GMatrix, CMatrix);
 
-    qDebug() << " G/Matrix :";
-    for(int i = 0; i < GMatrix.rows(); i++){
-        for(int j = 0; j < GMatrix.rows(); j++) qDebug() << GMatrix(i, j);
-        qDebug() << CMatrix(i,0) << "\n";
-    }
+    // qDebug() << " G/Matrix :";
+    // for(int i = 0; i < GMatrix.rows(); i++){
+    //     for(int j = 0; j < GMatrix.rows(); j++) qDebug() << GMatrix(i, j);
+    //     qDebug() << CMatrix(i,0) << "\n";
+    // }
 
     Eigen::MatrixXd Result = GMatrix.colPivHouseholderQr().solve(CMatrix);
     UpdateComponents(Result, n-1);
-    for(int i = 0; i < Result.rows(); i++) qDebug() << Result(i,0);
+   // for(int i = 0; i < Result.rows(); i++) qDebug() << Result(i,0);
 
 }
 

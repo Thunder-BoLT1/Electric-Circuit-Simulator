@@ -17,6 +17,7 @@ namespace Utils{
         return NewPoint;
     }
     int GetGridID(QPointF pos){ return pos.x() / 30 + (pos.y() / 30) * 31 ;}
+    bool isCorrectPos(QPointF NewPos){ return !(NewPos.x() <= 30 || NewPos.x() >= 870 || NewPos.y() <= 30 || NewPos.y() >= 570); }
     bool AStar(QVector<QVector<Vertex>> & Grid, int Start, int End){
         std::priority_queue<Vertex*, std::vector<Vertex*>, CompareVertex> open;
         Vertex* curr = &Grid[Start/31][Start%31];

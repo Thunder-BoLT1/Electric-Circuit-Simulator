@@ -2,6 +2,9 @@
 
 ComponentsMenu::ComponentsMenu() {
 
+    setWindowTitle("Components Menu");
+    setWindowIcon(QIcon(QDir::currentPath() + "\\input.png"));
+
     QVBoxLayout* Layout = new QVBoxLayout(this);
     QHBoxLayout* SubLayout = new QHBoxLayout();
 
