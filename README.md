@@ -109,3 +109,5 @@ Run the simulation.
 
 Click on any component after simulation to view its voltage or current.
 
+All Icons are From https://www.flaticon.com/
+
